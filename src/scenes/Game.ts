@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { debugDraw } from '../utils/debug'
 
 export default class Game extends Phaser.Scene {
 
@@ -25,12 +26,7 @@ export default class Game extends Phaser.Scene {
 
        wallsLayer.setCollisionByProperty({ collides: true })
 
-       const debugGraphics = this.add.graphics().setAlpha(0.7)
-       wallsLayer.renderDebug(debugGraphics, {
-           tileColor: null,
-           collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255),
-           faceColor: new Phaser.Display.Color(40, 39, 37, 255)
-       })
+       //debugDraw(wallsLayer, this)
 
        this.faune = this.physics.add.sprite(128, 128, 'faune', 'sprites/walk-down/walk-down-3.png')
 
@@ -113,7 +109,9 @@ export default class Game extends Phaser.Scene {
         }
         else
         {
-            this.faune.play('faune-idle-down')
+            const parts = this.faune.anims.currentAnim.key.split('-')
+            parts[1] = 'idle'
+            this.faune.play(parts.join('-'))
             this.faune.setVelocity(0, 0)
         }
     }
