@@ -3,6 +3,7 @@ import { debugDraw } from '../utils/debug'
 import { createLizardAnims } from '../anims/EnemyAnims'
 import { createCharacterAnims } from '../anims/CharacterAnims'
 import Lizard from '../enemies/Lizard'
+import '../characters/Faune'
 
 export default class Game extends Phaser.Scene {
 
@@ -31,17 +32,14 @@ export default class Game extends Phaser.Scene {
        const tileset = map.addTilesetImage('dungeon', 'tiles')
 
        map.createLayer('Ground', tileset)
+
+       this.faune = this.add.faune(128, 128, 'faune')
+
        const wallsLayer = map.createLayer('Walls', tileset)
 
        wallsLayer.setCollisionByProperty({ collides: true })
 
        //debugDraw(wallsLayer, this)
-
-       this.faune = this.physics.add.sprite(128, 128, 'faune', 'sprites/walk-down/walk-down-3.png')
-
-       this.faune.body.setSize(this.faune.width * 0.5, this.faune.height * 0.8)
-       this.faune.anims.play('faune-idle-down')
-
        this.cameras.main.startFollow(this.faune, true)
 
        const lizards = this.physics.add.group({
