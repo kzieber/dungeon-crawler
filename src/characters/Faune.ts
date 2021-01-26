@@ -25,7 +25,7 @@ export default class Faune extends Phaser.Physics.Arcade.Sprite
   private healthState = HealthState.IDLE
   private damageTime = 0
 
-  private _health = 5
+  private _health = 8
   private _coins = 0
 
   private knives?: Phaser.Physics.Arcade.Group

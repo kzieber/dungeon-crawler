@@ -76,17 +76,22 @@ export default class Game extends Phaser.Scene {
         lizardsLayer.objects.forEach(lizard => {
             this.lizards.get(lizard.x! + lizard.width! * 0.5, lizard.y! - lizard.height! * 0.5, 'lizard')
         })
-        this.lizards.get(256, 128, 'lizard')
 
+        //walls layer collider
         this.physics.add.collider(this.faune, wallsLayer)
         this.physics.add.collider(this.lizards, wallsLayer)
 
+        //faune and chests collider
         this.physics.add.collider(this.faune, chests, this.handlePlayerChestCollision, undefined, this)
 
+        //knives and walls collider
         this.physics.add.collider(this.knives, wallsLayer, this.handleKnifeWallCollision, undefined, this)
+
+        //knives and lizards collider
         this.physics.add.collider(this.knives, this.lizards, this.handleKnifeLizardCollision, undefined, this)
 
-        this.playerLizardsCollider = this.physics.add.collider(this.lizards, this.faune, this.handlePlayerLizardCollision, undefined, this)
+        //faune and lizards collider
+        this.playerLizardsCollider = this.physics.add.collider(this.lizards, this.faune, this.handlePlayerLizardCollision, this.processPlayerLizardCollision, this)
     }
 
     private handlePlayerChestCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject){
@@ -102,8 +107,13 @@ export default class Game extends Phaser.Scene {
 
     private handleKnifeLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject)
     {
-        this.knives.killAndHide(obj1)
         this.lizards.killAndHide(obj2)
+        this.knives.killAndHide(obj1)
+    }
+
+    private processPlayerLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject){
+        const lizard = obj2 as Lizard
+        return lizard.active
     }
 
     private handlePlayerLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject)
