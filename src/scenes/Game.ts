@@ -5,6 +5,7 @@ import { createCharacterAnims } from '../anims/CharacterAnims'
 import Lizard from '../enemies/Lizard'
 import '../characters/Faune'
 import Faune from '../characters/Faune'
+import { sceneEvents } from '../events/EventCenter'
 
 export default class Game extends Phaser.Scene {
 
@@ -24,6 +25,7 @@ export default class Game extends Phaser.Scene {
     create()
     {
         this.scene.run('game-ui')
+
         createCharacterAnims(this.anims)
         createLizardAnims(this.anims)
 
@@ -68,6 +70,8 @@ export default class Game extends Phaser.Scene {
         const dir = new Phaser.Math.Vector2(dx, dy).normalize().scale(200)
 
         this.faune.handleDamage(dir)
+
+        sceneEvents.emit('player-health-changed', this.faune.health)
     }
 
     update(t: number, dt: number)
