@@ -6,6 +6,7 @@ import { createChestAnims } from '../anims/TreasureAnims'
 import Lizard from '../enemies/Lizard'
 import '../characters/Faune'
 import Faune from '../characters/Faune'
+import Chest from '../items/Chests'
 import { sceneEvents } from '../events/EventCenter'
 
 export default class Game extends Phaser.Scene {
@@ -52,7 +53,9 @@ export default class Game extends Phaser.Scene {
 
         wallsLayer.setCollisionByProperty({ collides: true })
 
-        const chests = this.physics.add.staticGroup()
+        const chests = this.physics.add.staticGroup({
+            classType: Chest
+        })
         const chestsLayer = map.getObjectLayer('Chests')
         chestsLayer.objects.forEach(chestObj => {
             chests.get(chestObj.x! + chestObj.width! * 0.5, chestObj.y! - chestObj.height! * 0.5, 'treasure', 'chest_empty_open_anim_f0.png')
@@ -74,7 +77,7 @@ export default class Game extends Phaser.Scene {
         this.physics.add.collider(this.faune, wallsLayer)
         this.physics.add.collider(this.lizards, wallsLayer)
 
-        this.physics.add.collider(this.faune, chests)
+        this.physics.add.collider(this.faune, chests, this.handlePlayerChestCollision, undefined, this)
 
         this.physics.add.collider(this.knives, wallsLayer, this.handleKnifeWallCollision, undefined, this)
         this.physics.add.collider(this.knives, this.lizards, this.handleKnifeLizardCollision, undefined, this)
@@ -82,8 +85,14 @@ export default class Game extends Phaser.Scene {
         this.playerLizardsCollider = this.physics.add.collider(this.lizards, this.faune, this.handlePlayerLizardCollision, undefined, this)
     }
 
+    private handlePlayerChestCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject){
+        const chest = obj2 as Chest
+        this.faune.setChest(chest)
+    }
+
     private handleKnifeWallCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject)
     {
+        //Object 1 is the knife, Obj2 is the wall
         this.knives.killAndHide(obj1)
     }
 
