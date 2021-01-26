@@ -41,11 +41,6 @@ export default class Game extends Phaser.Scene {
 
         map.createLayer('Ground', tileset)
 
-        const chest = this.add.sprite(64, 64, 'treasure', 'chest_empty_open_anim_f0.png')
-        this.time.delayedCall(1000, () => {
-            chest.play('chest-open')
-        })
-
         this.knives = this.physics.add.group({
             classType: Phaser.Physics.Arcade.Image
         })
@@ -56,6 +51,12 @@ export default class Game extends Phaser.Scene {
         const wallsLayer = map.createLayer('Walls', tileset)
 
         wallsLayer.setCollisionByProperty({ collides: true })
+
+        const chests = this.physics.add.staticGroup()
+        const chestsLayer = map.getObjectLayer('Chests')
+        chestsLayer.objects.forEach(chestObj => {
+            chests.get(chestObj.x! + chestObj.width! * 0.5, chestObj.y! - chestObj.height! * 0.5, 'treasure', 'chest_empty_open_anim_f0.png')
+        })
 
         //debugDraw(wallsLayer, this)
         this.cameras.main.startFollow(this.faune, true)
@@ -72,6 +73,9 @@ export default class Game extends Phaser.Scene {
 
         this.physics.add.collider(this.faune, wallsLayer)
         this.physics.add.collider(this.lizards, wallsLayer)
+
+        this.physics.add.collider(this.faune, chests)
+
         this.physics.add.collider(this.knives, wallsLayer, this.handleKnifeWallCollision, undefined, this)
         this.physics.add.collider(this.knives, this.lizards, this.handleKnifeLizardCollision, undefined, this)
 
