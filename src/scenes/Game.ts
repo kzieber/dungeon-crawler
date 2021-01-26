@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { debugDraw } from '../utils/debug'
 import { createLizardAnims } from '../anims/EnemyAnims'
 import { createCharacterAnims } from '../anims/CharacterAnims'
+import { createChestAnims } from '../anims/TreasureAnims'
 import Lizard from '../enemies/Lizard'
 import '../characters/Faune'
 import Faune from '../characters/Faune'
@@ -32,12 +33,18 @@ export default class Game extends Phaser.Scene {
 
         createCharacterAnims(this.anims)
         createLizardAnims(this.anims)
+        createChestAnims(this.anims)
 
 
         const map = this.make.tilemap({key: 'dungeon'})
         const tileset = map.addTilesetImage('dungeon', 'tiles', 16, 16)
 
         map.createLayer('Ground', tileset)
+
+        const chest = this.add.sprite(64, 64, 'treasure', 'chest_empty_open_anim_f0.png')
+        this.time.delayedCall(1000, () => {
+            chest.play('chest-open')
+        })
 
         this.knives = this.physics.add.group({
             classType: Phaser.Physics.Arcade.Image
