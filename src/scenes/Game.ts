@@ -12,6 +12,8 @@ export default class Game extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
     private faune!: Faune
 
+    private playerLizardsCollider?: Phaser.Physics.Arcade.Collider
+
 	constructor()
 	{
 		super('game')
@@ -35,7 +37,12 @@ export default class Game extends Phaser.Scene {
 
         map.createLayer('Ground', tileset)
 
+        const knives = this.physics.add.group({
+            classType: Phaser.Physics.Arcade.Image
+        })
+
         this.faune = this.add.faune(128, 128, 'faune')
+        this.faune.setKnives(knives)
 
         const wallsLayer = map.createLayer('Walls', tileset)
 
@@ -56,8 +63,20 @@ export default class Game extends Phaser.Scene {
 
         this.physics.add.collider(this.faune, wallsLayer)
         this.physics.add.collider(lizards, wallsLayer)
+        this.physics.add.collider(knives, wallsLayer)
+        this.physics.add.collider(knives, lizards, this.handleKnifeLizardCollision, undefined, this)
 
-        this.physics.add.collider(lizards, this.faune, this.handlePlayerLizardCollision, undefined, this)
+        this.playerLizardsCollider = this.physics.add.collider(lizards, this.faune, this.handlePlayerLizardCollision, undefined, this)
+    }
+
+    private handleKnifeWallCollision(obj1, obj2)
+    {
+        
+    }
+
+    private handleKnifeLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject)
+    {
+
     }
 
     private handlePlayerLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject)
@@ -72,6 +91,10 @@ export default class Game extends Phaser.Scene {
         this.faune.handleDamage(dir)
 
         sceneEvents.emit('player-health-changed', this.faune.health)
+
+        if(this.faune.health <= 0) {
+            this.playerLizardsCollider?.destroy()
+        }
     }
 
     update(t: number, dt: number)
