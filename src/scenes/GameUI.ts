@@ -3,7 +3,7 @@ import { sceneEvents } from '../events/EventCenter'
 
 export default class GameUI extends Phaser.Scene
 {
-  private health: Phaser.GameObjects.Group
+  private hearts: Phaser.GameObjects.Group
 
   constructor()
   {
@@ -12,6 +12,15 @@ export default class GameUI extends Phaser.Scene
 
   create()
   {
+    this.add.image(6, 26, 'treasure', 'coin_anim_f0.png')
+    const coinsLabel = this.add.text(12, 20, '0', {
+      fontSize: '14'
+    })
+
+    sceneEvents.on('player-coins-changed', (coins: number) => {
+      coinsLabel.text = coins.toLocaleString()
+    })
+
     this.hearts = this.add.group({
       classType: Phaser.GameObjects.Image
     })
@@ -28,8 +37,9 @@ export default class GameUI extends Phaser.Scene
 
     sceneEvents.on('player-health-changed', this.handlePlayerHealthChanged, this)
 
-    this.events.on(Phaser.Scenes.Events.SHUTDOWN, () => {
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       sceneEvents.off('plaer-health-changed', this.handlePlayerHealthChanged, this)
+      sceneEvents.off('player-coins-changed')
     })
   }
 
