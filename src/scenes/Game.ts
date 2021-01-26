@@ -23,38 +23,39 @@ export default class Game extends Phaser.Scene {
 
     create()
     {
-       createCharacterAnims(this.anims)
-       createLizardAnims(this.anims)
+        this.scene.run('game-ui')
+        createCharacterAnims(this.anims)
+        createLizardAnims(this.anims)
 
 
-       const map = this.make.tilemap({key: 'dungeon'})
-       const tileset = map.addTilesetImage('dungeon', 'tiles', 16, 16)
+        const map = this.make.tilemap({key: 'dungeon'})
+        const tileset = map.addTilesetImage('dungeon', 'tiles', 16, 16)
 
-       map.createLayer('Ground', tileset)
+        map.createLayer('Ground', tileset)
 
-       this.faune = this.add.faune(128, 128, 'faune')
+        this.faune = this.add.faune(128, 128, 'faune')
 
-       const wallsLayer = map.createLayer('Walls', tileset)
+        const wallsLayer = map.createLayer('Walls', tileset)
 
-       wallsLayer.setCollisionByProperty({ collides: true })
+        wallsLayer.setCollisionByProperty({ collides: true })
 
-       //debugDraw(wallsLayer, this)
-       this.cameras.main.startFollow(this.faune, true)
+        //debugDraw(wallsLayer, this)
+        this.cameras.main.startFollow(this.faune, true)
 
-       const lizards = this.physics.add.group({
-           classType: Lizard,
-           createCallback: (go) => {
-             const lizGo = go as Lizard
-             lizGo.body.onCollide = true
-           }
-       })
+        const lizards = this.physics.add.group({
+            classType: Lizard,
+            createCallback: (go) => {
+                const lizGo = go as Lizard
+                lizGo.body.onCollide = true
+            }
+        })
 
-       lizards.get(256, 128, 'lizard')
+        lizards.get(256, 128, 'lizard')
 
-       this.physics.add.collider(this.faune, wallsLayer)
-       this.physics.add.collider(lizards, wallsLayer)
+        this.physics.add.collider(this.faune, wallsLayer)
+        this.physics.add.collider(lizards, wallsLayer)
 
-       this.physics.add.collider(lizards, this.faune, this.handlePlayerLizardCollision, undefined, this)
+        this.physics.add.collider(lizards, this.faune, this.handlePlayerLizardCollision, undefined, this)
     }
 
     private handlePlayerLizardCollision(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject)
