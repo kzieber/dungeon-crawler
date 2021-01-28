@@ -9,6 +9,6 @@ export default class Chest extends Phaser.Physics.Arcade.Sprite {
 
   open(){
     this.play('chest-open')
-    return Phaser.Math.Between(50, 200)
+    return Phaser.Math.Between(50, 500)
   }
 }
